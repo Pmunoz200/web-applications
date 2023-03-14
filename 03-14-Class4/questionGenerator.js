@@ -2,6 +2,7 @@
 const dayjs = require('dayjs');
 
 function Answer(text, name, date, score=0) {
+
     this.text = text;
     this.name = name;
     this.score = score;
@@ -12,11 +13,11 @@ function Answer(text, name, date, score=0) {
     }
 }
 
-function Question(text, name, date) {
+function Question(id, text, name, date) {
+    this.id = id;
     this.text = text;
     this.name = name;
     this.date = dayjs(date);
-    this.answers = [];
 
     this.add = (answer) => {
         this.answers.push(answer);
@@ -46,7 +47,7 @@ function Question(text, name, date) {
     }
 
     this.toString = () =>{
-        return `Question '${this.text}' asked by ${this.name} on ${this.date}. \nIt received ${this.answers.length} answers so far: \n${this.answers}`;
+        return `Question '${this.text}' asked by ${this.name} on ${this.date}.`;
     }
 }
 
