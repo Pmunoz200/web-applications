@@ -18,10 +18,6 @@ function Film(id, title, favorites=0, date=undefined, rating=undefined){
 function FilmLibrary (){
     this.films = [];
 
-    this.addNewFilm = (film) =>{
-        this.films.push(film);
-    }
-
     this.sortByDate = () =>{
 
         let filmsDate = [...this.films.filter(x => x.date != null)];
@@ -32,13 +28,28 @@ function FilmLibrary (){
     }
 
     this.deleteFilm = (id) =>{
-        let newList = [...this.films.filter(x => x.id != id)];
-        this.films = [... newList];
+        return new Promise((resolve, reject) => {
+        const sql = "DELETE FROM films WHERE id = ?";
+        db.run(sql,[id], (err) => {
+            if(err){
+                console.log("Error while deliting movie");
+            }else{
+                console.log("Movie successfully deleted!");
+            }
+        });
+        });
     }
 
     this.resetWatchedFilms = () => {
-        this.films.forEach(function(film) {
-            film.date = undefined;
+        return new Promise((resolve, reject) => {
+            const sql = "UPDATE films SET watchdate=NULL";
+            db.run(sql, (err)=> {
+                if(err){
+                    console.log("Error reseting the watch date");
+                }else{
+                    console.log("Watch date restarted!");
+                }
+            });
         });
     }
 
@@ -103,9 +114,9 @@ function FilmLibrary (){
 
     this.watchedBeforeDate = function watchedBeforeDate(date){
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM films WHERE watchdate = ?";
+            const sql = 'SELECT * FROM films WHERE watchdate < ?';
             const films = [];
-            db.all(sql, [date], (err, rows) =>{
+            db.all(sql, [], (err, rows) =>{
                 if(err){
                     reject(err);
                 }else{
@@ -115,9 +126,61 @@ function FilmLibrary (){
                     //console.log(films);
                     resolve(films);
                 }
-            })
+            });
         });
     }
+
+    this.ratedMovie = function ratedMovie(rating){
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM films WHERE rating >= ?";
+            const films = [];
+            db.all(sql, [rating], (err, rows) =>  {
+                if(err){
+                    reject(err);
+                }else{
+                    rows.forEach((row)=>{
+                        films.push(new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));    
+                    })
+                    resolve(films);
+                }
+                });
+            });
+        }
+    
+        
+    this.movieContainsTitle = function movieContainsTitle(str){
+        return new Promise((resolve, reject) => {
+            str = "%" + str + "%";
+            const films = [];
+            const sql = "SELECT * FROM films WHERE title like ?"
+            db.all(sql, [str], (err, rows) => {
+                if(err){
+                    reject(err);
+                }else{
+                    rows.forEach((row)=>{
+                        films.push(new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));    
+                    })
+                    resolve(films);
+                }
+            });
+        });
+    }
+    
+    this.addNewFilm = async function addNewFilm(film){
+        return new Promise((resolve, reject) => {
+            const sql = "INSERT INTO films (title, favorite, watchdate, rating) VALUES(?, ?, ?, ?)"
+            db.run(sql,
+                [film.title, film.favorites?1:0, film.date==null?'NULL':film.date.toISOString(), film.rating],
+                (err) => {
+                    if (err){
+                        console.log("Error loading the movie");
+                    }else{
+                        console.log("Movie successfully loaded!");
+                    }
+                });
+        });
+    }
+    
 
     this.print = () =>{
         for(let f of this.films){
@@ -138,7 +201,7 @@ async function main(){
     const listFilms = await filmL.getAllFilms();
     listFilms.forEach((elem) => {console.log(elem.title);})
 
-    console.log('\n ***********FAVORITE FILMS***********');
+    console.log('\n *******FAVORITE FILMS****************');
     const favoriteFilms = await filmL.getFavorites();
     favoriteFilms.forEach((elem)=> {console.log(elem.title);})
 
@@ -146,10 +209,23 @@ async function main(){
     const todayFilms = await filmL.watchedToday();
     todayFilms.forEach((elem)=> {console.log(elem.title);})
 
-    console.log('\n *******FILMS WATCHED BEFORE x***********');
-    const beforeFilms = await filmL.watchedBeforeDate("2023-03-15");
+    console.log('\n *****FILMS WATCHED BEFORE DATE*******');
+    const beforeFilms = await filmL.watchedBeforeDate("2023-03-21");
     todayFilms.forEach((elem)=> {console.log(elem.title);})
 
+    console.log('\n *******FILMS RATING GREATER***********');
+    const ratedFilms = await filmL.ratedMovie(3);
+    ratedFilms.forEach((elem)=> {console.log(elem.title);});
+
+    console.log('\n *******FILMS CONTAINS STRING***********');
+    const pulpMovies = await filmL.movieContainsTitle('Pulp');
+    pulpMovies.forEach((elem)=> {console.log(elem.title);});
+
+    let movie2 = new Film(2, 'Dune');
+    //filmL.addNewFilm(movie2);
+    
+    //filmL.deleteFilm(0);
+    filmL.resetWatchedFilms();
     db.close();
 }
 
