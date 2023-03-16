@@ -1,0 +1,11 @@
+{
+  "name": "lab2",
+  "version": "0.0.1",
+  "description": "Lab 2 related to async and SQLite",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pablo Munoz",
+  "license": "ISC"
+}
