@@ -199,27 +199,27 @@ async function main(){
 
     console.log('\n ***********ALL FILMS***********');
     const listFilms = await filmL.getAllFilms();
-    listFilms.forEach((elem) => {console.log(elem.title);})
+    listFilms.forEach((elem) => {console.log(`${elem.id}. ${elem.title}`);})
 
     console.log('\n *******FAVORITE FILMS****************');
     const favoriteFilms = await filmL.getFavorites();
-    favoriteFilms.forEach((elem)=> {console.log(elem.title);})
+    favoriteFilms.forEach((elem)=> {console.log(`${elem.id}. ${elem.title}`);})
 
     console.log('\n *******FILMS WATCHED TODAY***********');
     const todayFilms = await filmL.watchedToday();
-    todayFilms.forEach((elem)=> {console.log(elem.title);})
+    todayFilms.forEach((elem)=> {console.log(`${elem.id}. ${elem.title}`);})
 
     console.log('\n *****FILMS WATCHED BEFORE DATE*******');
     const beforeFilms = await filmL.watchedBeforeDate("2023-03-21");
-    todayFilms.forEach((elem)=> {console.log(elem.title);})
+    todayFilms.forEach((elem)=> {console.log(`${elem.id}. ${elem.title}`);})
 
     console.log('\n *******FILMS RATING GREATER***********');
     const ratedFilms = await filmL.ratedMovie(3);
-    ratedFilms.forEach((elem)=> {console.log(elem.title);});
+    ratedFilms.forEach((elem)=> {console.log(`${elem.id}. ${elem.title}`);});
 
     console.log('\n *******FILMS CONTAINS STRING***********');
     const pulpMovies = await filmL.movieContainsTitle('Pulp');
-    pulpMovies.forEach((elem)=> {console.log(elem.title);});
+    pulpMovies.forEach((elem)=> {console.log(`${elem.id}. ${elem.title}`);});
 
     let movie2 = new Film(2, 'Dune');
     //filmL.addNewFilm(movie2);
