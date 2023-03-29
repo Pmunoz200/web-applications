@@ -86,14 +86,16 @@ function createAnswerRow(answer){
     const tdAction = document.createElement('td');
     tdAction.innerHTML = `<button class="btn btn-info" id="answer-vote-${answer.id}">VOTE</button>`;
     tr.appendChild(tdAction);
+
+    return tr;
 }
 
 
 function fillAnswerTable(answers) {
-    const answerTable = document.getElementByID('answers-table');
+    const answerTable = document.getElementById('answers-table');
     for(const a of answers){
-        const ansEl = createAnswerRow(answer);
-        answerTable.append(andEl);
+        const ansEl = createAnswerRow(a);
+        answerTable.prepend(ansEl);
     }
 }
 
