@@ -56,6 +56,7 @@ function FilmLibrary (){
             new Film('21 Grams', true, "03/17/2023", 4),
             new Film('Shrek'),
             new Film('Star Wars'),
+            new Film('Madagascar', false, "02/25/2023", 3),
             new Film('Matrix')
         )
     }
@@ -99,6 +100,15 @@ function createElement(film){
     </svg>`);
     }
     tr.appendChild(tdRank);
+
+    const tdAction = document.createElement("td");
+    tdAction.innerHTML =`<button id="film-${film.id}" class="btn btn-light">
+    <svg xmlns="http://www.w3.org/2000/svg" id="film-${film.id}" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+    </svg></button>`;
+    tr.appendChild(tdAction);
+
+
     return tr;
 }
 
@@ -106,17 +116,99 @@ function createElement(film){
 
 function generateTable(films){
     const films_table = document.getElementById("films_table");
+    films_table.replaceChildren();
     for(let f of films){
         const film_element = createElement(f);
         films_table.appendChild(film_element);
     }
 }
 
+function filters(films){
+    const all = document.getElementById("All");
+    const favorite = document.getElementById("Favorites");
+    const best_rated = document.getElementById("Best_rated");
+    const last_month = document.getElementById("Last_month");
+    const list_filters = document.getElementById("filter_list");
+    const title = document.getElementById("main_title");
+
+    all.addEventListener('click', e =>{
+        if(!all.classList.contains("active")){
+            favorite.classList.remove("active");
+            best_rated.classList.remove("active");
+            last_month.classList.remove("active");
+            all.classList.add("active");
+            generateTable([...films]);
+        }
+    });
+
+    favorite.addEventListener('click', e=>{
+        if(!favorite.classList.contains("active")){
+            all.classList.remove("active");
+            best_rated.classList.remove("active");
+            last_month.classList.remove("active");
+            favorite.classList.add("active");
+            let fav_films = films.filter(f => f.favorites);
+            generateTable([... fav_films]);
+        }
+    });
+
+    best_rated.addEventListener('click', e => {
+        if(!best_rated.classList.contains("active")){
+            all.classList.remove("active");
+            favorite.classList.remove("active");
+            last_month.classList.remove("active");
+            best_rated.classList.add("active");
+            let best_films = films.filter(f => f.rating == 5);
+            generateTable([... best_films]);
+        }
+    });
+
+    last_month.addEventListener('click', e => {
+        if(!last_month.classList.contains("active")){
+            console.log("Entered");
+            all.classList.remove("active");
+            favorite.classList.remove("active");  
+            best_rated.classList.remove("active");
+            last_month.classList.add("active");
+            let last = films.filter((f) => {
+                const today = dayjs();
+                if(f.date!=null){
+                    return !f.date.diff(today, 'month');
+                }
+                return false;
+            });
+            generateTable([...last]);
+        }
+    });
+
+
+    filter_list.addEventListener('click', e => {
+    const all_filters = filter_list.children;
+    for(let i = 0; i<all_filters.length; i++){
+        if(all_filters[i].classList.contains("active")){
+            title.innerText = all_filters[i].innerText;
+            break;
+        }
+    }
+});
+}
+
+function deleter(movieLib){
+    const film_table = document.getElementById("films_table");
+    const film_list = film_table.children;
+    for(let i = 0; i<film_list.length; i++){
+        console.log(film_list[i].children[4]);
+    }
+    //movieLib.deleteFilm(id);
+}
+
 
 let main = () =>{
     const movieLibrary = new FilmLibrary();
     movieLibrary.init();
-    generateTable([...movieLibrary.films]);
+    generateTable([...movieLibrary.films], movieLibrary);
+    filters(movieLibrary.films);
+    deleter(movieLibrary);
 }
 
 
