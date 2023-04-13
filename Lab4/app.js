@@ -50,6 +50,10 @@ function FilmLibrary (){
         }
     }
 
+    this.setAllFilms = (films) => {
+        this.films = [... films];
+    }
+
     this.init = () => {
         this.films.push(
             new Film('Pulp Fiction', true, "03/10/2023", 5),
@@ -62,7 +66,7 @@ function FilmLibrary (){
     }
 }
 
-function createElement(film){
+function createElement(film, movieLib){
     const tr = document.createElement("tr");
 
     const tdTitle = document.createElement("td");
@@ -106,19 +110,30 @@ function createElement(film){
     <svg xmlns="http://www.w3.org/2000/svg" id="film-${film.id}" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
     </svg></button>`;
+
+
     tr.appendChild(tdAction);
 
+    //tdAction.addEventListener('click', e =>{
+    //    const id_del = e.target.id.split('-')[1];
+    //    tr.parentNode.removeChild(tr);
+    //});
+    tdAction.addEventListener('click', e =>{
+        const id_del = e.target.id.split('-')[1];
+        movieLib.deleteFilm(id_del);
+    }
+    );
 
     return tr;
 }
 
 
 
-function generateTable(films){
+function generateTable(films, movieLib){
     const films_table = document.getElementById("films_table");
     films_table.replaceChildren();
     for(let f of films){
-        const film_element = createElement(f);
+        const film_element = createElement(f, movieLib);
         films_table.appendChild(film_element);
     }
 }
@@ -197,7 +212,12 @@ function deleter(movieLib){
     const film_table = document.getElementById("films_table");
     const film_list = film_table.children;
     for(let i = 0; i<film_list.length; i++){
-        console.log(film_list[i].children[4]);
+        let elem = film_list[i].children[4];
+        elem.addEventListener('click', e =>{
+            const id_del = e.target.id.split('-')[1];
+            movieLib.deleteFilm(id_del);
+        }
+        );
     }
     //movieLib.deleteFilm(id);
 }
@@ -207,10 +227,10 @@ let main = () =>{
     const movieLibrary = new FilmLibrary();
     movieLibrary.init();
     generateTable([...movieLibrary.films], movieLibrary);
-    filters(movieLibrary.films);
-    deleter(movieLibrary);
+    filter 
+    //deleter(movieLibrary);
+    console.log(movieLibrary.films);
 }
-
 
 main();
 
