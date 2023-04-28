@@ -77,7 +77,8 @@ function FilmLibrary() {
       new Film("Shrek"),
       new Film("Star Wars"),
       new Film("Madagascar", false, "02/25/2023", 3),
-      new Film("Matrix")
+      new Film("Matrix"),
+      new Film("AoT", true, "04/20/2023", 5)
     );
   };
 }

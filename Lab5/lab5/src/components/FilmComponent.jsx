@@ -5,6 +5,7 @@ import { Row, Col, Table, FormCheck } from "react-bootstrap";
 import { useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./media.css";
+import dayjs from "dayjs";
 
 function Films(props) {
   return (
@@ -17,6 +18,7 @@ function Films(props) {
           <FilmTable
             filmList={props.filmList}
             favoriteMethod={props.favoriteMethod}
+            activeFilter={props.activeFilter}
           ></FilmTable>
         </Col>
       </Row>
@@ -25,8 +27,26 @@ function Films(props) {
 }
 
 function FilmTable(props) {
-  const copyFilm = [...props.filmList];
-
+  let copyFilm = [];
+  switch (props.activeFilter) {
+    case "Favorites":
+      copyFilm = [...props.filmList].filter((f) => f.favorites);
+      break;
+    case "Best Rated":
+      copyFilm = [...props.filmList].filter((f) => f.rating === 5);
+      break;
+    case "Seen Last Month":
+      copyFilm = [...props.filmList].filter((f) =>
+        f.date == null ? false : f.date.isAfter(dayjs().subtract(30, "day"))
+      );
+      break;
+    case "Unseen":
+      copyFilm = [...props.filmList].filter((f) => f.date == null);
+      break;
+    default:
+      copyFilm = [...props.filmList];
+      break;
+  }
   return (
     <>
       <Table>
@@ -62,7 +82,7 @@ function FilmRow(props) {
       <td>
         {props.film.date == null ? "" : props.film.date.format("YYYY-MM-DD")}
       </td>
-      <Rating></Rating>
+      <Rating film={props.film}></Rating>
     </tr>
   );
 }
@@ -87,7 +107,23 @@ function Favorite(props) {
 }
 
 function Rating(props) {
-  return <></>;
+  const rating = props.film.rating;
+  const fillStar = [];
+  const emptyStar = [];
+  for (let i = 0; i < rating; i++) {
+    fillStar.push(<i className="bi bi-star-fill" key={i}></i>);
+  }
+
+  for (let i = 0; i < 5 - rating; i++) {
+    fillStar.push(<i className="bi bi-star" key={i + rating}></i>);
+  }
+
+  return (
+    <td>
+      {fillStar}
+      {emptyStar}
+    </td>
+  );
 }
 
 export default Films;

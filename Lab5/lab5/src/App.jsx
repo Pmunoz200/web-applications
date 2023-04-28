@@ -29,7 +29,6 @@ function App() {
   };
 
   const defineFilter = (f) => {
-    console.log(f);
     setFilter(f);
   };
 

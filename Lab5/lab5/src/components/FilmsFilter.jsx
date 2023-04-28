@@ -19,8 +19,8 @@ function FilmsFilter(props) {
       </ListGroup.Item>
       <ListGroup.Item
         action
-        active={props.activeFilter === "BestRated"}
-        onClick={() => props.defineFilter("BestRated")}
+        active={props.activeFilter === "Best Rated"}
+        onClick={() => props.defineFilter("Best Rated")}
       >
         Best Rated
       </ListGroup.Item>
