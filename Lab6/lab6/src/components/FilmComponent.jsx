@@ -21,6 +21,7 @@ function Films(props) {
             favoriteMethod={props.favoriteMethod}
             activeFilter={props.activeFilter}
             addFilm={props.addFilm}
+            editFilm={props.editFilm}
           ></FilmTable>
         </Col>
       </Row>
@@ -53,6 +54,12 @@ function FilmTable(props) {
       copyFilm = [...props.filmList];
       break;
   }
+
+  const editEditableFilm = (film) => {
+    setEditableFilm(film);
+    setShowForm(true);
+  };
+
   return (
     <>
       <Table>
@@ -65,6 +72,7 @@ function FilmTable(props) {
               date={film.date}
               key={film.id}
               favoriteMethod={props.favoriteMethod}
+              editFilm={editEditableFilm}
             />
           ))}
         </tbody>
@@ -78,8 +86,16 @@ function FilmTable(props) {
               props.addFilm(film);
               setShowForm(false);
             }}
+            editFilm={(film) => {
+              props.editFilm(film);
+              setEditableFilm();
+              setShowForm(false);
+            }}
             lastID={props.filmList.slice(-1)[0].id}
-            cancel={() => setShowForm(false)}
+            cancel={() => {
+              setEditableFilm();
+              setShowForm(false);
+            }}
           />
         ) : (
           <div className="d-flex flex-row-reverse bd-highlight">
@@ -114,22 +130,23 @@ function FilmRow(props) {
         {props.film.date == null ? "" : props.film.date.format("YYYY-MM-DD")}
       </td>
       <Rating film={props.film}></Rating>
+      <FilmEdit editableFilm={props.editFilm} film={props.film}></FilmEdit>
     </tr>
   );
 }
 
 function Favorite(props) {
-  const [checked, setChecked] = useState(props.film.favorites);
+  const [favorite, setFavorite] = useState(props.film.favorites);
   return (
     <>
       <td>
         <Form.Check
           type={"checkbox"}
           label={"Favorite"}
-          checked={checked}
+          checked={favorite}
           onChange={(e) => {
-            setChecked(e.currentTarget.checked);
             props.favoriteMethod(props.film.id, e.currentTarget.checked);
+            setFavorite(e.currentTarget.checked);
           }}
         />
       </td>
@@ -153,6 +170,19 @@ function Rating(props) {
     <td>
       {fillStar}
       {emptyStar}
+    </td>
+  );
+}
+
+function FilmEdit(props) {
+  return (
+    <td>
+      <Button
+        variant="outline-dark"
+        onClick={() => props.editableFilm(props.film)}
+      >
+        <i className="bi bi-pencil-fill"></i>
+      </Button>
     </td>
   );
 }

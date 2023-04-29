@@ -26,10 +26,30 @@ function App() {
         }
       });
     });
+    return status;
   };
 
   const addFilm = (film) => {
     setFilmList((oldFilm) => [...oldFilm, film]);
+  };
+
+  const editFilm = (film) => {
+    setFilmList((films) => {
+      return films.map((f) => {
+        if (f.id === film.id) {
+          return new Film(
+            film.id,
+            film.title,
+            film.favorites,
+            film.date,
+            film.rating
+          );
+        } else {
+          return f;
+        }
+      });
+    });
+    console.log(filmList);
   };
 
   const defineFilter = (f) => {
@@ -53,6 +73,7 @@ function App() {
               favoriteMethod={favorite}
               activeFilter={filter}
               addFilm={addFilm}
+              editFilm={editFilm}
             ></Films>
           </Col>
         </Row>

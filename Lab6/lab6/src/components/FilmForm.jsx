@@ -5,22 +5,31 @@ import dayjs from "dayjs";
 
 function FilmForm(props) {
   const [id, setId] = useState(props.film ? props.film.id : props.lastID + 1);
-  const [title, setTitle] = useState("");
-  const [favorite, setFavorite] = useState(false);
-  const [date, setDate] = useState(dayjs().format("YYYY-MM-DD"));
-  const [rating, setRating] = useState(0);
+  const [title, setTitle] = useState(props.film ? props.film.title : "");
+  const [favorite, setFavorite] = useState(
+    props.film ? props.film.favorites : false
+  );
+  const [date, setDate] = useState(() => {
+    if (props.film) {
+      return props.film.date == null
+        ? undefined
+        : props.film.date.format("YYYY-MM-DD");
+    } else {
+      return dayjs().format("YYYY-MM-DD");
+    }
+  });
+  const [rating, setRating] = useState(props.film ? props.film.rating : 0);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Create a new answer
     const film = new Film(id, title, favorite, date, rating);
     //TODO: add validation!
-    // if (props.answer) {
-    //   props.updateAnswer(answer);
-    // } else {
-    //   props.addAnswer(answer);
-    // }
-    props.addFilm(film);
+    if (props.film) {
+      props.editFilm(film);
+    } else {
+      props.addFilm(film);
+    }
   };
 
   return (
@@ -45,9 +54,10 @@ function FilmForm(props) {
             <Form.Check
               type="checkbox"
               label="Favorite"
-              value={favorite}
+              checked={favorite}
               onChange={(event) => {
-                setFavorite(event.target.checked);
+                setFavorite(event.currentTarget.checked);
+                console.log(favorite);
               }}
             />
           </Form.Group>
@@ -77,9 +87,15 @@ function FilmForm(props) {
       </Row>
       <Row>
         <Form.Group>
-          <Button variant="primary" type="submit">
-            Add
-          </Button>
+          {props.film ? (
+            <Button variant="success" type="submit">
+              Edit
+            </Button>
+          ) : (
+            <Button variant="primary" type="submit">
+              Add
+            </Button>
+          )}
           <Button variant="danger" onClick={props.cancel}>
             Cancel
           </Button>
