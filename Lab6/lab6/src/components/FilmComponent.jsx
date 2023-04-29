@@ -6,6 +6,7 @@ import { useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./media.css";
 import dayjs from "dayjs";
+import FilmForm from "./FilmForm";
 
 function Films(props) {
   return (
@@ -19,6 +20,7 @@ function Films(props) {
             filmList={props.filmList}
             favoriteMethod={props.favoriteMethod}
             activeFilter={props.activeFilter}
+            addFilm={props.addFilm}
           ></FilmTable>
         </Col>
       </Row>
@@ -28,6 +30,10 @@ function Films(props) {
 
 function FilmTable(props) {
   let copyFilm = [];
+
+  const [showForm, setShowForm] = useState(false);
+  const [editableFilm, setEditableFilm] = useState();
+
   switch (props.activeFilter) {
     case "Favorites":
       copyFilm = [...props.filmList].filter((f) => f.favorites);
@@ -63,6 +69,31 @@ function FilmTable(props) {
           ))}
         </tbody>
       </Table>
+      <Row>
+        {showForm ? (
+          <FilmForm
+            key={editableFilm ? editableFilm.id : -1}
+            film={editableFilm}
+            addFilm={(film) => {
+              props.addFilm(film);
+              setShowForm(false);
+            }}
+            lastID={props.filmList.slice(-1)[0].id}
+            cancel={() => setShowForm(false)}
+          />
+        ) : (
+          <div className="d-flex flex-row-reverse bd-highlight">
+            <Button
+              variant="primary"
+              onClick={() => setShowForm(true)}
+              className="addButton"
+            >
+              {" "}
+              +{" "}
+            </Button>
+          </div>
+        )}
+      </Row>
     </>
   );
 }

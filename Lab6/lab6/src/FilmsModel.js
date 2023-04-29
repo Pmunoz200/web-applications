@@ -3,19 +3,12 @@ import dayjs from "dayjs";
 
 let movie_id = 1;
 
-function Film(
-  title,
-  favorites = false,
-  date = undefined,
-  rating = 0,
-  id = movie_id
-) {
+function Film(id, title, favorites = false, date = undefined, rating = 0) {
   this.id = id;
   this.title = title;
   this.favorites = favorites;
   this.date = date == null ? undefined : dayjs(date);
   this.rating = rating;
-  movie_id += 1;
 }
 
 function FilmLibrary() {
@@ -72,13 +65,13 @@ function FilmLibrary() {
 
   this.init = () => {
     this.films.push(
-      new Film("Pulp Fiction", true, "03/10/2023", 5),
-      new Film("21 Grams", true, "03/17/2023", 4),
-      new Film("Shrek"),
-      new Film("Star Wars"),
-      new Film("Madagascar", false, "02/25/2023", 3),
-      new Film("Matrix"),
-      new Film("AoT", true, "04/20/2023", 5)
+      new Film(0, "Pulp Fiction", true, "03/10/2023", 5),
+      new Film(1, "21 Grams", true, "03/17/2023", 4),
+      new Film(2, "Shrek"),
+      new Film(3, "Star Wars"),
+      new Film(4, "Madagascar", false, "02/25/2023", 3),
+      new Film(5, "Matrix"),
+      new Film(6, "AoT", true, "04/20/2023", 5)
     );
   };
 }

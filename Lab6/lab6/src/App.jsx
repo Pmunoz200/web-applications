@@ -20,12 +20,16 @@ function App() {
     setFilmList((films) => {
       return films.map((film) => {
         if (film.id === filmID) {
-          return new Film(film.title, status, film.date, film.rating, film.id);
+          return new Film(film.id, film.title, status, film.date, film.rating);
         } else {
           return film;
         }
       });
     });
+  };
+
+  const addFilm = (film) => {
+    setFilmList((oldFilm) => [...oldFilm, film]);
   };
 
   const defineFilter = (f) => {
@@ -48,15 +52,8 @@ function App() {
               filmList={filmList}
               favoriteMethod={favorite}
               activeFilter={filter}
+              addFilm={addFilm}
             ></Films>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={11}>
-            <></>
-          </Col>
-          <Col>
-            <Button variant="primary">+</Button>{" "}
           </Col>
         </Row>
       </Container>
