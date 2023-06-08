@@ -30,24 +30,30 @@ exports.getAllFilms = function getAllFilms() {
   });
 };
 
-exports.filmFilters = function filmFilters(filter) {
+exports.favoriteFilms = () => {
   return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM films WHERE favorite = 1";
     const films = [];
-    const sql = "";
-    switch (filter) {
-      case "favorite":
-        sql = "SELECT * FROM films WHERE favorite = 1";
-        break;
-      case "BestRated":
-        sql = "SELECT * FROM films WHERE rating = 5";
-        break;
-      case "Unseen":
-        sql = "SELECT * FROM films WHERE watchdate IS NULL";
-      default:
-        sql = "SELECT * FROM films";
-        break;
-    }
-    console.log(sql);
+    db.all(sql, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        rows.forEach((row) => {
+          films.push(
+            new Film(row.id, row.title, row.favorite, row.watchdate, row.rating)
+          );
+        });
+        //console.log(films);
+        resolve(films);
+      }
+    });
+  });
+};
+
+exports.unseenFilms = () => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM films WHERE watchdate IS NULL";
+    const films = [];
     db.all(sql, (err, rows) => {
       if (err) {
         reject(err);

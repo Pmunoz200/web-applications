@@ -3,4 +3,4 @@ GET http://localhost:3001/api/films
 
 #####
 
-GET http://localhost:3001/api/films/favorite
+GET http://localhost:3001/api/films/favorites

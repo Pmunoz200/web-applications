@@ -27,8 +27,17 @@ app.get("/api/films", async (req, res) => {
 //GET /api/films/<filter>
 app.get("/api/films/:filter", async (req, res) => {
   try {
-    const films = await dao.filmFilters(req.params.filter);
-    res.json(films);
+    let films;
+    switch (req.params.filter) {
+      case "favorite":
+        films = await dao.favoriteFilms();
+        res.json(films);
+        break;
+      case "unseen":
+        films = await dao.unseenFilms();
+        res.json(films);
+        break;
+    }
   } catch {
     res.status(500).end();
   }
